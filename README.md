@@ -1,12 +1,12 @@
 # ansible-collectd
-[![Build Status](https://travis-ci.org/NYTimes/ansible-collectd.svg?branch=master)](https://travis-ci.org/NYTimes/ansible-collectd)
+[![Build Status](https://travis-ci.org/jimbydamonk/ansible-collectd.svg?branch=master)](https://travis-ci.org/jimbydamonk/ansible-collectd)
 
 Install and configure collectd.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+NA
 
 Role Variables
 --------------
@@ -15,13 +15,48 @@ The default variables for this role are listed below. They are defined in defaul
 
 ```yml
 ---
+collectd_plugin_dir: "{{ dist_collectd_plugin_dir }}"
+
+collectd_conf_dir: "{{ dist_collectd_conf_dir }}"
+collectd_confd_dir: "{{ dist_collectd_confd_dir }}"
+collectd_template_files: []
+
+collectd_types_db_dir: "{{ dist_collectd_types_db_dir }}"
+collectd_types_templates: []
+
+collectd_plugins:
+  - logfile
+  - aggregation
+  - cpu
+  - df
+  - disk
+  - interface
+  - load
+  - memory
+
+collectd_plugins_config:
+  logfile:
+    LogLevel: "info"
+    File: "/var/log/collectd.log"
+    Timestamp: true
+    PrintSeverity: false
+  aggregation:
+    Aggregation:
+      Plugin: "cpu"
+      Type: "cpu"
+      GroupBy: "Host"
+      CalculateNum: true
+      CalculateSum: true
+      CalculateAverage: true
+  df:
+    ValuesPercentage: true
 
 ```
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None
 
 Example Playbook
 ----------------
