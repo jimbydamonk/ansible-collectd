@@ -1,0 +1,36 @@
+---
+collectd_plugin_dir: "{{ dist_collectd_plugin_dir }}"
+
+collectd_conf_dir: "{{ dist_collectd_conf_dir }}"
+collectd_confd_dir: "{{ dist_collectd_confd_dir }}"
+collectd_template_files: []
+
+collectd_types_db_dir: "{{ dist_collectd_types_db_dir }}"
+collectd_types_templates: []
+
+collectd_plugins:
+  - logfile
+  - aggregation
+  - cpu
+  - df
+  - disk
+  - interface
+  - load
+  - memory
+
+collectd_plugins_config:
+  logfile:
+    LogLevel: "info"
+    File: "/var/log/collectd.log"
+    Timestamp: true
+    PrintSeverity: false
+  aggregation:
+    Aggregation:
+      Plugin: "cpu"
+      Type: "cpu"
+      GroupBy: "Host"
+      CalculateNum: true
+      CalculateSum: true
+      CalculateAverage: true
+  df:
+    ValuesPercentage: true

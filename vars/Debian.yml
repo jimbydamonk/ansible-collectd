@@ -1,0 +1,4 @@
+dist_collectd_plugin_dir: /usr/lib/collectd
+dist_collectd_conf_dir: /etc/collectd
+dist_collectd_confd_dir: /etc/collectd/collectd.conf.d
+dist_collectd_types_db_dir: /usr/share/collectd

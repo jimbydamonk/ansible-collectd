@@ -1,0 +1,63 @@
+---
+- name: Lookup OS specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Run OS specific tasks
+  include: "setup-{{ ansible_os_family }}.yml"
+
+- name: Create collectd plugin directory
+  file:
+    path: "{{ collectd_plugin_dir }}"
+    state: directory
+
+- name: Create collectd types  directory
+  file:
+    path: "{{ collectd_types_db_dir }}"
+    state: directory
+
+- name: Add types to collectd
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ collectd_types_db_dir }}/{{ item.src[:-3] |basename }}"
+    mode: "0755"
+  notify: Restart collectd
+  with_items: "{{ collectd_types_templates }}"
+
+- name: Copy collectd config templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ collectd_conf_dir }}/{{ item.src[:-3] | basename }}"
+    mode: "0755"
+  notify: Restart collectd
+  with_items: "{{ collectd_template_files }}"
+
+- name: Configure collectd main conf
+  template:
+    src:  etc/collectd.conf.j2
+    dest: "{{ collectd_conf_dir }}/collectd.conf"
+    mode: "0755"
+    backup: yes
+  notify: Restart collectd
+
+- name: Set sebool for collectd
+  seboolean:
+    name: collectd_tcp_network_connect
+    state: yes
+    persistent: yes
+  when: (ansible_selinux != false) and (ansible_selinux.status == 'enabled')
+
+- name: Copy custom policy module
+  copy:
+    src: collectdpolicy.pp
+    dest: /tmp/collectdpolicy.pp
+  register: collectd_custom_policy_output
+  when: (ansible_selinux != false) and (ansible_selinux.status == 'enabled')
+
+- name: Install custom policy module
+  shell: /usr/sbin/semodule -i /tmp/collectdpolicy.pp
+  when: collectd_custom_policy_output.changed
+
+- name: Create /var/log/collectd.log
+  file:
+    path: /var/log/collectd.log
+    state: touch

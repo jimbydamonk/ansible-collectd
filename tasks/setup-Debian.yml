@@ -1,0 +1,6 @@
+---
+
+- name: Install collectd
+  apt:
+    name: collectd
+    state: latest

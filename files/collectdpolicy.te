@@ -1,0 +1,18 @@
+
+module collectdpolicy 1.0;
+
+require {
+    type var_log_t;
+    type collectd_t;
+    class file open;
+    class file create;
+    class dir write;
+    class dir add_name;
+}
+
+#============= collectd_t ==============
+allow collectd_t var_log_t:file open;
+allow collectd_t var_log_t:file create;
+allow collectd_t var_log_t:dir write;
+allow collectd_t var_log_t:dir add_name;
+

@@ -1,0 +1,28 @@
+---
+
+- name: Install collectd
+  yum:
+    name: collectd
+    state: latest
+
+- name: Install collectd-python
+  yum:
+    name: collectd-python
+    state: latest
+  when: ansible_distribution == 'CentOS' and  ansible_distribution_version < '7'
+
+- name: Install collectd-rrdtool
+  yum:
+    name: collectd-rrdtool
+    state: latest
+
+- name: Install collectd-curl_json
+  yum:
+    name: collectd-curl_json
+    state: latest
+  when: ansible_distribution == 'CentOS' and  ansible_distribution_version >= '7'
+
+- name: Install collectd-rrdtool
+  yum:
+    name: collectd-rrdtool
+    state: latest

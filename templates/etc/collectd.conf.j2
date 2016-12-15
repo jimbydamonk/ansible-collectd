@@ -1,0 +1,36 @@
+
+PluginDir   "{{ collectd_plugin_dir }}"
+TypesDB     "{{ collectd_types_db_dir}}/types.db"
+{% for type_file in collectd_types_templates %}
+TypesDB     "{{ collectd_types_db_dir }}/{{ type_file.src[:-3] | basename }}"
+{% endfor %}
+
+Interval     30
+ReadThreads  5
+
+{% for plugin in collectd_plugins %}
+LoadPlugin {{ plugin }}
+{% endfor %}
+
+{% for config_name, config in collectd_plugins_config.iteritems() %}
+<Plugin "{{ config_name }}">
+{% if config.items %}
+{% for k,v in config.iteritems() recursive %}
+{% if v is string %}
+    {{k}} "{{v}}"
+{% elif v is mapping %}
+    <{{ k }}>
+    {{loop(v.items())}}
+    </{{ k }}>
+{% else %}
+    {{k}} {{v | lower }}
+{% endif %}
+{% endfor %}
+{% else %}
+  {{ config }}
+{% endif %}
+</Plugin>
+
+{% endfor %}
+
+Include "{{ collectd_confd_dir }}/*.conf"
