@@ -26,7 +26,7 @@
 - name: Copy collectd config templates
   template:
     src: "{{ item.src }}"
-    dest: "{{ collectd_conf_dir }}/{{ item.src[:-3] | basename }}"
+    dest: "{{ collectd_confd_dir }}/{{ item.src[:-3] | basename }}"
     mode: "0755"
   notify: Restart collectd
   with_items: "{{ collectd_template_files }}"
